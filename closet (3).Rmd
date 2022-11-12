@@ -1,0 +1,400 @@
+---
+title: "closet"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE}
+library(dplyr)
+library(dasc2594)
+library(here)
+library(readxl)
+library(stringr)
+library(reticulate)
+library(RSocrata)
+library(httr)
+library(jsonlite)
+```
+
+```{r}
+dat <- read.csv('hack.csv')
+#dat <- tolower(dat)
+
+is.atomic(dat)
+```
+```{r}
+### best working code chunk
+my_auth_token <- "c07715f450534a45826144758221211"
+call_api <- function(hosts){
+  base_url <- "http://api.weatherapi.com/v1"
+  # only change q='zipcode' for different areas
+  call_url <- paste0("http://api.weatherapi.com/v1/forecast.json?key=c07715f450534a45826144758221211&q=72701&days=1&aqi=no&alerts=no") 
+  message("Calling ", call_url)
+  req <- GET(call_url)
+  
+  if(req$status_code != 200){
+    stop("Problem with calling the API - response: ", content(req))
+  }
+response_content <- rawToChar(content(req, 'raw'))
+json_response <- fromJSON(response_content)
+json_response
+}
+daily_temp <- call_api(forecast$forecastday$day$avgtemp_f)
+weather <- daily_temp$forecast$forecastday$day$avgtemp_f
+
+```
+
+
+
+```{r}
+whoop <- function(style, comfy){
+  #dat <- filter(dat, (occasion == style & comfort == comfy))
+  dat <- dat[dat$occasion == style, ]
+  dat <- dat[dat$comfort == comfy, ]
+  # The outside if statement is the weather
+  # The inside if statement uses user input to select the outfit
+  
+  #occasion <- 'casual'
+  
+  if (weather < 50){
+    if (occasion == 'formal'){
+      dress <- dat[dat$type == 'dress', ]
+      length_dress <- nrow(dress)
+      random_num <- sample(1 :length_dress, 1)
+      select_dress <- dress[random_num, ]
+      
+      #whoop <- select_dress$ID
+    }
+    
+    else if (occasion == 'casual') {
+      top <- dat[(dat$type == 'top'), ]
+      top_type <- top[top$category == 'long sleeve', ]  
+      length_top <- nrow(top_type)
+      random_num <- sample(1 :length_top, 1)
+      select_top <- top_type[random_num, ]
+      
+      # if(select_top$color=='colorful') {
+      #   bottom <- dat[dat$type == 'bottom', ]
+      #   bottom_type <- bottom[bottom$category == 'pants', ] 
+      #   bottom_color <- bottom_type[bottom_type$color == 'neutral', ]
+      #   length_bottom <- nrow(bottom_color)
+      #   random_num <- sample(1 :length_bottom, 1)
+      #   select_bottom <- bottom_color[random_num,]
+      # }
+      # else {
+      #   bottom <- dat[dat$type == 'bottom', ]
+      #   bottom_type <- bottom[bottom$category == 'pants', ]
+      #   length_bottom <- nrow(bottom_type)
+      #   random_num <- sample(1 :length_bottom, 1)
+      #   select_bottom <- bottom_type[random_num, ]
+      # }
+    }
+    else if (occasion == 'lounge'){
+      top <- dat[(dat$type == 'top'), ]
+      top_type <- top[top$category == 'long sleeve', ]  
+      length_top <- nrow(top_type)
+      random_num <- sample(1 :length_top, 1)
+      select_top <- top_type[random_num, ]
+      
+      # if(select_top$color=='colorful') {
+      #   bottom <- dat[dat$type == 'bottom', ]
+      #   bottom_type <- bottom[bottom$category == 'pants', ] 
+      #   bottom_color <- bottom_type[bottom_type$color == 'neutral', ]
+      #   length_bottom <- nrow(bottom_color)
+      #   random_num <- sample(1 :length_bottom, 1)
+      #   select_bottom <- bottom_color[random_num,]
+      # }
+      # else {
+      #   bottom <- dat[dat$type == 'bottom', ] 
+      #   bottom_type <- bottom[bottom$category == 'pants', ]
+      #   length_bottom <- nrow(bottom_type)
+      #   random_num <- sample(1 :length_bottom, 1)
+      #   select_bottom <- bottom_type[random_num, ]
+      # }
+    }
+    
+    else if (occasion == 'semi-formal'){
+      dress <- dat[dat$type == 'dress', ]
+      length_dress <- nrow(dress)
+      random_num <- sample(1 :length_dress, 1)
+      select_dress <- dress[random_num, ]
+    }
+    
+    else if (occasion == 'athleisure'){
+      top <- dat[(dat$type == 'top'), ]
+      top_type <- top[top$category == 'long sleeve', ]  
+      length_top <- nrow(top_type)
+      random_num <- sample(1 :length_top, 1)
+      select_top <- top_type[random_num, ]
+      
+      # if(select_top$color=='colorful') {
+      #   bottom <- dat[dat$type == 'bottom', ]
+      #   bottom_type <- bottom[bottom$category == 'pants', ] 
+      #   bottom_color <- bottom_type[bottom_type$color == 'neutral', ]
+      #   length_bottom <- nrow(bottom_color)
+      #   random_num <- sample(1 :length_bottom, 1)
+      #   select_bottom <- bottom_color[random_num,]
+      # }
+      # else {
+      #   bottom <- dat[dat$type == 'bottom', ] 
+      #   bottom_type <- bottom[bottom$category == 'pants', ]
+      #   length_bottom <- nrow(bottom_type)
+      #   random_num <- sample(1 :length_bottom, 1)
+      #   select_bottom <- bottom_type[random_num, ]
+      # }
+    }
+    
+    else if (occasion == 'business casual'){
+      top <- dat[(dat$type == 'top'), ]
+      top_type <- top[top$category == 'long sleeve', ]  
+      length_top <- nrow(top_type)
+      random_num <- sample(1 :length_top, 1)
+      select_top <- top_type[random_num, ]
+      
+      # if(select_top$color=='colorful') {
+      #   bottom <- dat[dat$type == 'bottom', ]
+      #   bottom_type <- bottom[bottom$category == 'pants', ] 
+      #   bottom_color <- bottom_type[bottom_type$color == 'neutral', ]
+      #   length_bottom <- nrow(bottom_color)
+      #   random_num <- sample(1 :length_bottom, 1)
+      #   select_bottom <- bottom_color[random_num,]
+      # }
+      # else {
+      #   bottom <- dat[dat$type == 'bottom', ]
+      #   bottom_type <- bottom[bottom$category == 'pants', ]
+      #   length_bottom <- nrow(bottom_type)
+      #   random_num <- sample(1 :length_bottom, 1)
+      #   select_bottom <- bottom_type[random_num, ]
+      # }
+    }
+    # We recommend the jacket for all options below 50 degrees
+    jacket <- dat[dat$type == 'jacket', ]
+    length_jacket <- nrow(jacket)
+    random_num <- sample(1 :length_jacket, 1)
+    select_jacket <- jacket[random_num, ]
+  }
+  else if ((50 <= weather) & (weather > 70)){
+      if (occasion == 'formal'){
+        dress <- dat[dat$type == 'dress', ]
+        length_dress <- nrow(dress)
+        random_num <- sample(1 :length_dress, 1)
+        select_dress <- dress[random_num, ]
+      }
+    
+      else if (occasion == 'casual') {
+        top <- dat[(dat$type == 'top'), ]
+        top_type <- top[top$category == 'long sleeve', ]  
+        length_top <- nrow(top_type)
+        random_num <- sample(1 :length_top, 1)
+        select_top <- top_type[random_num, ]
+      
+        # if(select_top$color =='colorful') {
+        #   bottom <- dat[dat$type == 'bottom', ]
+        #   bottom_type <- bottom[bottom$category == 'pants', ] 
+        #   bottom_color <- bottom_type[bottom_type$color == 'neutral', ]
+        #   length_bottom <- nrow(bottom_color)
+        #   random_num <- sample(1 :length_bottom, 1)
+        #   select_bottom <- bottom_color[random_num,]
+        # }
+        # else {
+        #   bottom <- dat[dat$type == 'bottom', ]
+        #   bottom_type <- bottom[bottom$category == 'pants', ]
+        #   length_bottom <- nrow(bottom_type)
+        #   random_num <- sample(1 :length_bottom, 1)
+        #   select_bottom <- bottom_type[random_num, ]
+        # }
+    }
+      else if (occasion == 'lounge'){
+        top <- dat[(dat$type == 'top'), ]
+        top_type <- top[top$category == 'long sleeve', ]  
+        length_top <- nrow(top_type)
+        random_num <- sample(1 :length_top, 1)
+        select_top <- top_type[random_num, ]
+        
+      #   if(select_top$color=='colorful') {
+      #     bottom <- dat[dat$type == 'bottom', ]
+      #     bottom_type <- bottom[bottom$category == 'pants', ] 
+      #     bottom_color <- bottom_type[bottom_type$color == 'neutral', ]
+      #     length_bottom <- nrow(bottom_color)
+      #     random_num <- sample(1 :length_bottom, 1)
+      #     select_bottom <- bottom_color[random_num,]
+      # }
+      #   else {
+      #     bottom <- dat[dat$type == 'bottom', ] 
+      #       bottom_type <- bottom[bottom$category == 'pants', ]
+      #       length_bottom <- nrow(bottom_type)
+      #       random_num <- sample(1 :length_bottom, 1)
+      #       select_bottom <- bottom_type[random_num, ]
+      #   }
+  }
+    else if (occasion == 'semi-formal'){
+      dress <- dat[dat$type == 'dress', ]
+        length_dress <- nrow(dress)
+        random_num <- sample(1 :length_dress, 1)
+        select_dress <- dress[random_num, ]
+    }
+      else if (occasion == 'athleisure'){
+        top <- dat[(dat$type == 'top'), ]
+        top_type <- top[top$category == 'long sleeve', ]  
+        length_top <- nrow(top_type)
+        random_num <- sample(1 :length_top, 1)
+        select_top <- top_type[random_num, ]
+        
+        # if(select_top$color=='colorful') {
+        #   bottom <- dat[dat$type == 'bottom', ]
+        #   bottom_type <- bottom[bottom$category == 'pants', ] 
+        #   bottom_color <- bottom_type[bottom_type$color == 'neutral', ]
+        #   length_bottom <- nrow(bottom_color)
+        #   random_num <- sample(1 :length_bottom, 1)
+        #   select_bottom <- bottom_color[random_num,]
+        # }
+        # else {
+        #   bottom <- dat[dat$type == 'bottom', ] 
+        #   bottom_type <- bottom[bottom$category == 'pants', ]
+        #   length_bottom <- nrow(bottom_type)
+        #   random_num <- sample(1 :length_bottom, 1)
+        #   select_bottom <- bottom_type[random_num, ]
+        # }
+      }
+      else if (occasion == 'business casual'){
+        top <- dat[(dat$type == 'top'), ]
+        top_type <- top[top$category == 'long sleeve', ]  
+        length_top <- nrow(top_type)
+        random_num <- sample(1 :length_top, 1)
+        select_top <- top_type[random_num, ]
+        # if(select_top$color=='colorful') {
+        #   bottom <- dat[dat$type == 'bottom', ]
+        #   bottom_type <- bottom[bottom$category == 'pants', ] 
+        #   bottom_color <- bottom_type[bottom_type$color == 'neutral', ]
+        #   length_bottom <- nrow(bottom_color)
+        #   random_num <- sample(1 :length_bottom, 1)
+        #   select_bottom <- bottom_color[random_num,]
+        # }
+        # else {
+        #   bottom <- dat[dat$type == 'bottom', ]
+        #   bottom_type <- bottom[bottom$category == 'pants', ]
+        #   length_bottom <- nrow(bottom_type)
+        #   random_num <- sample(1 :length_bottom, 1)
+        #   select_bottom <- bottom_type[random_num, ]
+        # }
+      }
+  }
+      else if(weather > 70){
+        if (occasion == 'formal'){
+        dress <- dat[dat$type == 'dress', ]
+        length_dress <- nrow(dress)
+        random_num <- sample(1 :length_dress, 1)
+        select_dress <- dress[random_num, ]
+        
+    
+      }
+        else if (occasion == 'casual'){
+        top <- dat[(dat$type == 'top'), ]
+        top_type <- top[top$category == 'short sleeve', ]  
+        length_top <- nrow(top_type)
+        random_num <- sample(1 :length_top, 1)
+        select_top <- top_type[random_num, ]
+        
+          # if(select_top$color == 'colorful') {
+          #   bottom <- dat[dat$type == 'bottom', ]
+          #   bottom_type <- bottom[bottom$category == 'shorts', ] 
+          #   bottom_color <- bottom_type[bottom_type$color == 'neutral', ]
+          #   length_bottom <- nrow(bottom_color)
+          #   random_num <- sample(1 :length_bottom, 1)
+          #   select_bottom <- bottom_color[random_num,]
+          # }
+          # 
+          # else {
+          #   bottom <- dat[dat$type == 'bottom', ]
+          #   bottom_type <- bottom[bottom$category == 'shorts', ]
+          #   length_bottom <- nrow(bottom_type)
+          #   random_num <- sample(1 :length_bottom, 1)
+          #   select_bottom <- bottom_type[random_num, ]
+          # }
+        }
+        else if (occasion == 'lounge'){
+          top <- dat[(dat$type == 'top'), ]
+          top_type <- top[top$category == 'short sleeve', ]  
+          length_top <- nrow(top_type)
+          random_num <- sample(1 :length_top, 1)
+          select_top <- top_type[random_num, ]
+          
+          # if(select_top$color=='colorful') {
+          #   bottom <- dat[dat$type == 'bottom', ]
+          #   bottom_type <- bottom[bottom$category == 'shorts', ] 
+          #   bottom_color <- bottom_type[bottom_type$color == 'neutral', ]
+          #   length_bottom <- nrow(bottom_color)
+          #   random_num <- sample(1 :length_bottom, 1)
+          #   select_bottom <- bottom_color[random_num,]
+          # }
+          # else {
+          #   bottom <- dat[dat$type == 'bottom', ] 
+          #   bottom_type <- bottom[bottom$category == 'shorts', ]
+          #   length_bottom <- nrow(bottom_type)
+          #   random_num <- sample(1 :length_bottom, 1)
+          #   select_bottom <- bottom_type[random_num, ]
+          # }
+        }
+        else if (occasion == 'semi-formal'){
+          dress <- dat[dat$type == 'dress', ]
+          length_dress <- nrow(dress)
+          random_num <- sample(1 :length_dress, 1)
+          select_dress <- dress[random_num, ]
+        }
+        
+        else if (occasion == 'athleisure'){
+          top <- dat[(dat$type == 'top'), ]
+          top_type <- top[top$category == 'short sleeve', ]  
+          length_top <- nrow(top_type)
+          random_num <- sample(1 :length_top, 1)
+          select_top <- top_type[random_num, ]
+          
+          # if(select_top$color=='colorful') {
+          #   bottom <- dat[dat$type == 'bottom', ]
+          #   bottom_type <- bottom[bottom$category == 'shorts', ] 
+          #   bottom_color <- bottom_type[bottom_type$color == 'neutral', ]
+          #   length_bottom <- nrow(bottom_color)
+          #   random_num <- sample(1 :length_bottom, 1)
+          #   select_bottom <- bottom_color[random_num,]
+          # }
+          # else {
+          #   bottom <- dat[dat$type == 'bottom', ] 
+          #   bottom_type <- bottom[bottom$category == 'shorts', ]
+          #   length_bottom <- nrow(bottom_type)
+          #   random_num <- sample(1 :length_bottom, 1)
+          #   select_bottom <- bottom_type[random_num, ]
+          # }
+        }
+        else if (occasion == 'business casual'){
+          top <- dat[(dat$type == 'top'), ]
+          top_type <- top[top$category == 'short sleeve', ]  
+          length_top <- nrow(top_type)
+          random_num <- sample(1 :length_top, 1)
+          select_top <- top_type[random_num, ]
+          
+          # if(select_top$color=='colorful') {
+          #   bottom <- dat[dat$type == 'bottom', ]
+          #   bottom_type <- bottom[bottom$category == 'shorts', ] 
+          #   bottom_color <- bottom_type[bottom_type$color == 'neutral', ]
+          #   length_bottom <- nrow(bottom_color)
+          #   random_num <- sample(1 :length_bottom, 1)
+          #   select_bottom <- bottom_color[random_num,]
+          # }
+          # else {
+          #   bottom <- dat[dat$type == 'bottom', ]
+          #   bottom_type <- bottom[bottom$category == 'shorts', ]
+          #   length_bottom <- nrow(bottom_type)
+          #   random_num <- sample(1 :length_bottom, 1)
+          #   select_bottom <- bottom_type[random_num, ]
+          # }
+        }
+  
+
+      }
+}
+
+```
+
