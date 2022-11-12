@@ -4,3 +4,4 @@ This is the repository for all iterations of Hackathon Content. For the final pr
 The RMD file is the code that would be connected to the app.R file (website)
 The csv is the data that needs to be passed through the RMD file. 
 The RMD is what actually selects the outfits behind the website.
+We also included a PDF of the presentation
